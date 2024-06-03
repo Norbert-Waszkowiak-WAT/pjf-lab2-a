@@ -1,0 +1,70 @@
+name: Autograding Tests
+'on':
+- push
+- repository_dispatch
+permissions:
+  checks: write
+  actions: read
+  contents: read
+jobs:
+  run-autograding-tests:
+    runs-on: ubuntu-latest
+    if: github.actor != 'github-classroom[bot]'
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+    - name: Test bat
+      id: test-bat
+      uses: classroom-resources/autograding-command-grader@v1
+      with:
+        test-name: Test bat
+        setup-command: ''
+        command: python test_bat.py
+        timeout: 10
+        max-score: 10
+    - name: Test human
+      id: test-human
+      uses: classroom-resources/autograding-command-grader@v1
+      with:
+        test-name: Test human
+        setup-command: ''
+        command: python test_human.py
+        timeout: 10
+        max-score: 10
+    - name: Test vampire
+      id: test-vampire
+      uses: classroom-resources/autograding-command-grader@v1
+      with:
+        test-name: Test vampire
+        setup-command: ''
+        command: python test_vampire.py
+        timeout: 10
+        max-score: 10
+    - name: Test simulation
+      id: test-simulation
+      uses: classroom-resources/autograding-command-grader@v1
+      with:
+        test-name: Test simulation
+        setup-command: ''
+        command: python test_simulation.py
+        timeout: 10
+        max-score: 25
+    - name: Test team
+      id: test-team
+      uses: classroom-resources/autograding-command-grader@v1
+      with:
+        test-name: Test team
+        setup-command: ''
+        command: python test_team.py
+        timeout: 10
+        max-score: 15
+    - name: Autograding Reporter
+      uses: classroom-resources/autograding-grading-reporter@v1
+      env:
+        TEST-BAT_RESULTS: "${{steps.test-bat.outputs.result}}"
+        TEST-HUMAN_RESULTS: "${{steps.test-human.outputs.result}}"
+        TEST-VAMPIRE_RESULTS: "${{steps.test-vampire.outputs.result}}"
+        TEST-SIMULATION_RESULTS: "${{steps.test-simulation.outputs.result}}"
+        TEST-TEAM_RESULTS: "${{steps.test-team.outputs.result}}"
+      with:
+        runners: test-bat,test-human,test-vampire,test-simulation,test-team
