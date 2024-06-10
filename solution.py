@@ -101,16 +101,30 @@ class Team():
         self._creatures.append(creature)
     
     def get_alive_members(self):
-        pass
+        alive_members = []
+        for creature in self._creatures:
+            if creature.get_health() > 0:
+                alive_members.append(creature)
+        return alive_members
 
     def get_defender(self) -> Creature:
-        pass
+        alive_members = self.get_alive_members()
+        if len(alive_members) > 0:
+            return alive_members[0]
+        else:
+            return None
 
     def attack(self, other_team) -> None:
-        pass
+        for creature in self.get_alive_members():
+            defender = other_team.get_defender()
+            if defender is not None:
+                creature.attack(defender)
 
     def is_at_least_one_alive_member(self) -> bool:
-        pass
+        if len(self.get_alive_members()) > 0:
+            return True
+        else:
+            return False
 
 class Simulation():
     def __init__(self, team_A, team_B):
@@ -118,13 +132,23 @@ class Simulation():
         self._teamB = team_B
     
     def execute_round(self) -> None:
-        pass
+        self._teamA.attack(self._teamB)
+        self._teamB.attack(self._teamA)
 
     def has_ended(self) -> bool:
-        pass
+        if self._teamA.is_at_least_one_alive_member() and self._teamB.is_at_least_one_alive_member():
+            return False
+        else:
+            return True
 
     def execute(self) -> None:
-        pass
+        while self._teamA.is_at_least_one_alive_member() and self._teamB.is_at_least_one_alive_member():
+            self.execute_round()
+
     
     def get_winner(self) -> Team:
-        pass
+        if len(self._teamA.get_alive_members()) > 0:
+            return self._teamA
+        else:
+            return self._teamB
+
